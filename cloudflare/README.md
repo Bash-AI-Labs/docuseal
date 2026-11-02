@@ -22,9 +22,14 @@ browser ──► Access (bashailabs.cloudflareaccess.com) ──► Worker ─�
 
 ## One-time setup
 
-1. Account prerequisites (dashboard, billing): verified email, Workers Paid plan (Containers), R2 enabled.
-   Done already: `bashailabs.workers.dev` subdomain, Zero Trust org `bashailabs.cloudflareaccess.com`, Access apps.
-2. `npx wrangler login` as `hello@bashailabs.com`.
+1. Account prerequisites (dashboard, billing): Workers Paid plan (Containers) and R2 enabled.
+   Done already: verified email, `bashailabs.workers.dev` subdomain, Zero Trust org `bashailabs.cloudflareaccess.com`, Access apps.
+2. Log wrangler in as `hello@bashailabs.com` without touching your default (personal) login. Open the printed link in
+   a private window, since the OAuth page uses whichever Cloudflare session the browser already has:
+   ```sh
+   npx wrangler auth create bashailabs --browser=false
+   npx wrangler auth activate bashailabs .   # this directory now always uses that profile
+   ```
 3. Create the bucket. Browsers load page previews and signatures via presigned R2 URLs, so allow the app origin:
    ```sh
    npx wrangler r2 bucket create bashai-docuseal
