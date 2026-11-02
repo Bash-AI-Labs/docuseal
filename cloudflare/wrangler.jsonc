@@ -1,0 +1,33 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "bashai-docuseal",
+  // BashAI Labs account (hello@bashailabs.com); pinned so a deploy can never land in a personal account.
+  "account_id": "cf3c0ad1f027a8b13d751506e23c73a2",
+  "main": "src/index.js",
+  "compatibility_date": "2026-10-01",
+  "workers_dev": true,
+  // Version preview URLs would sit outside the Access app, so keep them off.
+  "preview_urls": false,
+  "observability": { "enabled": true },
+  "containers": [
+    {
+      "class_name": "DocuSeal",
+      "image": "./Dockerfile",
+      "instance_type": "standard-1",
+      // Must stay 1: SQLite + Litestream allow exactly one writer.
+      "max_instances": 1
+    }
+  ],
+  "durable_objects": {
+    "bindings": [{ "name": "DOCUSEAL", "class_name": "DocuSeal" }]
+  },
+  "exports": {
+    "DocuSeal": { "type": "durable-object", "storage": "sqlite" }
+  },
+  "vars": {
+    "APP_URL": "https://bashai-docuseal.bashailabs.workers.dev",
+    "S3_ATTACHMENTS_BUCKET": "bashai-docuseal",
+    "S3_ENDPOINT": "https://cf3c0ad1f027a8b13d751506e23c73a2.r2.cloudflarestorage.com"
+  }
+  // Secrets (wrangler secret put): SECRET_KEY_BASE, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY
+}

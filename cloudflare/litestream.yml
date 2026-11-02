@@ -1,0 +1,10 @@
+dbs:
+  - path: /data/docuseal/db.sqlite3
+    replica:
+      type: s3
+      bucket: ${S3_ATTACHMENTS_BUCKET}
+      path: litestream/db
+      endpoint: ${S3_ENDPOINT}
+      region: auto
+      access-key-id: ${AWS_ACCESS_KEY_ID}
+      secret-access-key: ${AWS_SECRET_ACCESS_KEY}
