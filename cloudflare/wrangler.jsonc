@@ -1,6 +1,8 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "bashai-docuseal",
+  // BashAI Labs account (hello@bashailabs.com); pinned so a deploy can never land in a personal account.
+  "account_id": "cf3c0ad1f027a8b13d751506e23c73a2",
   "main": "src/index.js",
   "compatibility_date": "2026-10-01",
   "workers_dev": true,
@@ -23,9 +25,9 @@
     "DocuSeal": { "type": "durable-object", "storage": "sqlite" }
   },
   "vars": {
-    "APP_URL": "https://bashai-docuseal.charlesnapster65.workers.dev",
+    "APP_URL": "https://bashai-docuseal.bashailabs.workers.dev",
     "S3_ATTACHMENTS_BUCKET": "bashai-docuseal",
-    "S3_ENDPOINT": "https://63da4568a9f0be4985d30be8e3896fe3.r2.cloudflarestorage.com"
+    "S3_ENDPOINT": "https://cf3c0ad1f027a8b13d751506e23c73a2.r2.cloudflarestorage.com"
   }
   // Secrets (wrangler secret put): SECRET_KEY_BASE, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY
 }
