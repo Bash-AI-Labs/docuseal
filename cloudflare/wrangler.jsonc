@@ -1,0 +1,31 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "bashai-docuseal",
+  "main": "src/index.js",
+  "compatibility_date": "2026-10-01",
+  "workers_dev": true,
+  // Version preview URLs would sit outside the Access app, so keep them off.
+  "preview_urls": false,
+  "observability": { "enabled": true },
+  "containers": [
+    {
+      "class_name": "DocuSeal",
+      "image": "./Dockerfile",
+      "instance_type": "standard-1",
+      // Must stay 1: SQLite + Litestream allow exactly one writer.
+      "max_instances": 1
+    }
+  ],
+  "durable_objects": {
+    "bindings": [{ "name": "DOCUSEAL", "class_name": "DocuSeal" }]
+  },
+  "exports": {
+    "DocuSeal": { "type": "durable-object", "storage": "sqlite" }
+  },
+  "vars": {
+    "APP_URL": "https://bashai-docuseal.charlesnapster65.workers.dev",
+    "S3_ATTACHMENTS_BUCKET": "bashai-docuseal",
+    "S3_ENDPOINT": "https://63da4568a9f0be4985d30be8e3896fe3.r2.cloudflarestorage.com"
+  }
+  // Secrets (wrangler secret put): SECRET_KEY_BASE, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY
+}
