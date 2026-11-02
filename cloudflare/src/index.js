@@ -9,7 +9,7 @@ export class DocuSeal extends DurableObject {
   constructor(ctx, env) {
     super(ctx, env);
     // A redeployed Durable Object forgets the timeout; re-arm it if the container survived.
-    if (ctx.container.running) ctx.blockConcurrencyWhile(() => ctx.container.setInactivityTimeout(KEEP_WARM_MS));
+    if (ctx.container.running) ctx.blockConcurrencyWhile(() => keepWarm(ctx.container));
   }
 
   async fetch(request) {
@@ -44,19 +44,24 @@ export class DocuSeal extends DurableObject {
           AWS_SECRET_ACCESS_KEY: env.AWS_SECRET_ACCESS_KEY,
         },
       });
-      await container.setInactivityTimeout(KEEP_WARM_MS);
+      await keepWarm(container);
     }
     // Litestream restore + Rails boot + migrations can take minutes. Probe /up: "/" 302s to /setup or /sign_in.
     const port = container.getTcpPort(PORT);
     for (const deadline = Date.now() + 300_000; Date.now() < deadline; ) {
       try {
         if ((await port.fetch("http://localhost/up", { redirect: "manual" })).ok) return;
-      } catch {}
+      } catch {
+        if (!container.running) throw new Error("container exited during boot, check its logs");
+      }
       await scheduler.wait(500);
     }
     throw new Error("not healthy after 5 minutes");
   }
 }
+
+// Losing the timeout only costs cold starts, so never let it fail a request.
+const keepWarm = (container) => container.setInactivityTimeout(KEEP_WARM_MS).catch((e) => console.error("setInactivityTimeout", e));
 
 export default {
   async fetch(request, env) {

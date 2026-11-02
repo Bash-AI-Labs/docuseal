@@ -20,7 +20,11 @@ browser ──► Access (bashai.cloudflareaccess.com) ──► Worker ──�
 ## One-time setup
 
 1. Account prerequisites: Workers Paid plan (Containers) and R2 enabled.
-2. `npx wrangler r2 bucket create bashai-docuseal`
+2. Create the bucket. Browsers load page previews and signatures via presigned R2 URLs, so allow the app origin:
+   ```sh
+   npx wrangler r2 bucket create bashai-docuseal
+   npx wrangler r2 bucket cors set bashai-docuseal --file r2-cors.json
+   ```
 3. R2 → Manage API tokens → **Object Read & Write** scoped to `bashai-docuseal`, then:
    ```sh
    npx wrangler secret put AWS_ACCESS_KEY_ID      # R2 Access Key ID
